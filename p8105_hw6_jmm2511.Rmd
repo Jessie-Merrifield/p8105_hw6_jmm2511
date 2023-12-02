@@ -249,8 +249,9 @@ cv_df |>
   mutate(model = fct_inorder(model)) |> 
   ggplot(aes(x = model, y = rmse)) + geom_violin() +
   labs(
+    title = "Distribution of RMSE values by model",
     y = "Root Mean Squared Error",
-    x = "Residuals")                         
+    x = "Model")                         
 ```
 
-
+The proposed model is not as good. 
