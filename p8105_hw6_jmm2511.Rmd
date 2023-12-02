@@ -64,7 +64,7 @@ q2_estimates = weather_df %>%
   summarise(log_product = log(estimate[term == "tmin"] * estimate[term == "prcp"]),
             r_squared=r.squared)%>%
   filter(!is.nan(log_product), !is.nan(r_squared))
-
+#removed NaN values
     
 q2_estimates  
   
@@ -82,12 +82,22 @@ Use 5000 bootstrap samples and, for each bootstrap sample, produce estimates of 
 Plot the distribution of your estimates, and describe these in words. 
 
 ```{r plot r2}
+q2_plot_r2 <- q2_estimates %>% 
+  ggplot(aes(x=r_squared))+
+  geom_density()
+
+q2_plot_r2
 
 ```
 
 
 
 ```{r plot log}
+q2_plot_r2 <- q2_estimates %>% 
+  ggplot(aes(x=log_product))+
+  geom_density()
+
+q2_plot_r2
 
 ```
 
@@ -96,10 +106,11 @@ Using the 5000 bootstrap estimates, identify the 2.5% and 97.5% quantiles to pro
  and log(β^0∗β^1)
 
 ```{r CI}
-#group_by(term) %>% 
- #   ci_lower = quantile(estimate, 0.025), 
- #   ci_upper = quantile(estimate, 0.975))
-  
+#bootstrap_results |> 
+ # group_by(term) |> 
+  #summarize(
+   # ci_lower = quantile(estimate, 0.025), 
+    #ci_upper = quantile(estimate, 0.975))
 ```
 
 
