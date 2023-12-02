@@ -48,11 +48,16 @@ weather_df =
     tmax = tmax / 10) |>
   select(name, id, everything())
 ```
+a simple linear regression with tmax as the response with tmin and prcp as the predictors, and are interested in the distribution of two quantities estimated from these data:
 
+r^2
+log(β^1∗β^2)
+
+Use 5000 bootstrap samples and, for each bootstrap sample, produce estimates of these two quantities. 
 
 ```{r lm estimates and bootstrap}
 q2_estimates = weather_df %>% 
-  modelr::bootstrap(10, id = "strap_number") %>% 
+  modelr::bootstrap(5000, id = "strap_number") %>% 
   mutate(
     models = map(.x = strap, ~lm(tmax ~ tmin + prcp, data=.x)),
     tidy_results = map(models, broom::tidy),
@@ -65,18 +70,8 @@ q2_estimates = weather_df %>%
             r_squared=r.squared)%>%
   filter(!is.nan(log_product), !is.nan(r_squared))
 #removed NaN values
-    
-q2_estimates  
   
 ```
-
-
-a simple linear regression with tmax as the response with tmin and prcp as the predictors, and are interested in the distribution of two quantities estimated from these data:
-
-r^2
-log(β^1∗β^2)
-
-Use 5000 bootstrap samples and, for each bootstrap sample, produce estimates of these two quantities. 
 
 
 Plot the distribution of your estimates, and describe these in words. 
