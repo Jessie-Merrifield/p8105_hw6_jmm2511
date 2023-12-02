@@ -106,11 +106,15 @@ Using the 5000 bootstrap estimates, identify the 2.5% and 97.5% quantiles to pro
  and log(β^0∗β^1)
 
 ```{r CI}
-#bootstrap_results |> 
- # group_by(term) |> 
-  #summarize(
-   # ci_lower = quantile(estimate, 0.025), 
-    #ci_upper = quantile(estimate, 0.975))
+log_product_quantiles <- quantile(q2_estimates$log_product, c(0.025, 0.975))
+#had to do it this way because I had previously grouped by strap_number
+
+log_product_quantiles
+
+r2_quantiles <- quantile(q2_estimates$r_squared, c(0.025, 0.975))
+
+r2_quantiles
+
 ```
 
 
