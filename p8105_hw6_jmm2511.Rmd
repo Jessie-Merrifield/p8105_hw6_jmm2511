@@ -13,6 +13,8 @@ library(readxl)
 
 library(p8105.datasets)
 
+set.seed(1)
+
 knitr::opts_chunk$set(
 	echo = TRUE,
 	warning = FALSE,
@@ -31,7 +33,7 @@ scale_colour_discrete = scale_colour_viridis_d
 scale_fill_discrete = scale_fill_viridis_d
 ```
 
-## Problem 2
+# Problem 2
 
 Using Central Park weather data
 
@@ -70,6 +72,8 @@ q2_estimates = weather_df %>%
             r_squared=r.squared)%>%
   filter(!is.nan(log_product), !is.nan(r_squared))
 #removed NaN values
+
+head(q2_estimates)
   
 ```
 
@@ -118,28 +122,74 @@ r2_quantiles
  from a fitted regression, and broom::tidy() (with some additional wrangling) should help in computing log(β^1∗β^2)
 
 
-## Problem 3
+# Problem 3
 
 In this problem, you will analyze data gathered to understand the effects of several variables on a child’s birthweight. 
 
 Load and clean the data for regression analysis (i.e. convert numeric to factor where appropriate, check for missing data, etc.).
 
 ```{r q3 read in data}
-birthweight<-read.csv("./data/birthweight.csv")
+birthweight<-read.csv("./data/birthweight.csv") 
+
+lapply(birthweight,class)
+#variables in integer and numeric
+
+sum(is.na(birthweight))
+#no missing 
 ```
 
 Propose a regression model for birthweight. This model may be based on a hypothesized structure for the factors that underly birthweight, on a data-driven model-building process, or a combination of the two. Describe your modeling process and show a plot of model residuals against fitted values – use add_predictions and add_residuals in making this plot.
 
+```{r proposed fit and residuals plot}
+q3_fit_proposed<-lm(bwt ~ gaweeks + fincome + momage, data= birthweight)
+
+#I did a quick search to see what factors might be commonly linked to birthweight
+
+birthweight |> 
+  modelr::add_residuals(q3_fit_proposed) |> 
+  modelr::add_predictions(q3_fit_proposed) |> 
+  ggplot(aes(x = pred, y = resid)) + 
+  geom_point()
+
+  
+```
 
 
-Compare your model to two others:
+
+### Compare your model to two others:
 
 
 
 One using length at birth and gestational age as predictors (main effects only)
 
+```{r}
+q3_fit_length_weeks <- lm(bwt ~ blength + gaweeks, data = birthweight)
+
+birthweight |> 
+  modelr::add_residuals(q3_fit_length_weeks) |> 
+  modelr::add_predictions(q3_fit_length_weeks) |> 
+  ggplot(aes(x = pred, y = resid)) + 
+  geom_point()
+
+
+```
+
 
 
 One using head circumference, length, sex, and all interactions (including the three-way interaction) between these
 Make this comparison in terms of the cross-validated prediction error; use crossv_mc and functions in purrr as appropriate.
+
+```{r}
+q3_fit_length_sex<- lm(bwt ~ bhead * blength + bhead * babysex + blength * babysex, data = birthweight)
+
+birthweight |> 
+  modelr::add_residuals(q3_fit_length_sex) |> 
+  modelr::add_predictions(q3_fit_length_sex) |> 
+  ggplot(aes(x = pred, y = resid)) + 
+  geom_point()
+
+```
+
+
+
 
